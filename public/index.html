@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arogya</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="index.css">
+<script src="../index.js"></script>
+
+<header>
+  <a href="index.html"><div class="logo">
+    <img src="assets/logo.png" alt="Arogya App Logo" >
+  </div>
+  </a>
+    <div class ="Arogya">
+    <h1>Arogya</h1>
+  </div>
+
+    <div class="language-switcher">
+    <button class="language-switcher">
+      <select>
+      <option value="en">English</option>
+      <option value="hi">हिंदी</option>
+    </select>
+    </button>
+  </div>
+</header>
+
+<body>
+
+  <div  section class="main-section">
+  <div class="row">
+    <div class="col-md-6">
+      <a href="https://localhost:7867/">
+        <div class="large-icon ai-bot" >
+          <span class="icon-label" >
+            <img src="assets/AI Bot Large Icon.png" onclick="playClickSound()">
+          </span>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a href="#helper">
+        <div class="large-icon helper-finder">
+          <span class="icon-label">
+            <img src="assets/help finder.png" onclick="playClickSound()">
+            </span>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a href="#homeser">
+        <div class="large-icon helper-finder">
+          <span class="icon-label">
+            <img src="assets/services.png" onclick="playClickSound()">
+            </span>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <a href="#r1">
+        <div class="large-icon routine-tracker" >
+          <span class="icon-label" >
+              <img src="assets/routine tracker.png" onclick="playClickSound()">
+          </span>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a href="#ev1">
+        <div class="large-icon events">
+          <span class="icon-label">
+            <img src="assets/events.png" onclick="playClickSound()">
+            </span>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a href="#reeminder">
+        <div class="large-icon reminder">
+          <span class="icon-label">
+            <img src="assets/reminder.png" onclick="playClickSound()">
+            </span>
+        </div>
+      </a>
+    </div>
+  </div>
+  </div>
+  </div>
+  </section>
+  <section id = "r1">
+    <div class="routine-tracker1">
+    <a href="#r2">
+      <img src="assets/rpage.png">
+      </a>
+  </div>
+  </section>
+  <section id = "r2">
+    <div class="routine-tracker2">
+    <a href="#">
+      <img src="assets/rpage2.png">
+      </a>
+  </div>
+  </section>
+
+<section class  id ="ev1">
+  <div class="events1">
+    <a href="#water">
+       <img src="assets/eventsimg.png">
+      </a>
+  </div>
+</section>
+
+<section class  id ="unav">
+  <div class="unavailable">
+    <a href="#">
+       <img src="assets/unavailable.png">
+      </a>
+  </div>
+</section>
+
+<section class  id ="helper">
+  <div class="helpers">
+    <a href="#unav">
+       <img src="assets/helpersaround.png">
+      </a>
+  </div>
+</section>
+
+  <section class  id ="water">
+  <div class="water">
+    <a href="#">
+       <img src="assets/water.png">
+      </a>
+  </div>
+</section>
+
+
+<section class  id ="reeminder">
+  <div class="remiinder">
+    <a href="#reeminder2">
+       <img src="assets/reminit.png">
+      </a>
+  </div>
+</section>
+
+<section class  id ="reeminder2">
+  <div class="remiinder2">
+    <a href="#remfinal">
+       <img src="assets/reminit2.png">
+      </a>
+  </div>
+</section>
+
+<section class  id ="remfinal">
+  <div class="remiinder3">
+    <a href="#">
+       <img src="assets/remint3.png">
+      </a>
+  </div>
+</section>
+
+<section class  id ="homeser">
+  <div class="serv">
+    <a href="#unav">
+       <img src="assets/homeservices.png">
+      </a>
+  </div>
+</section>
+
+<section class  id ="voicebot">
+  <div class="voicebt">
+    <a href="#Listening">
+       <img src="assets/voicebotimgfull.png">
+      </a>
+  </div>
+</section>
+
+
+<section class  id ="Listening">
+  <div class="listen">
+    <a href="#">
+       <img src="assets/listening.png">
+      </a>
+  </div>
+
+  <div class="flaskvoice">
+    <h1>Audio Input/Output Example</h1>
+    <button onclick="startRecording()">Start Recording</button>
+    <button onclick="stopRecording()">Stop Recording</button>
+    <button onclick="playRecording()">Play Recording</button>
+    <button onclick="processAudio()">Process Audio</button>
+    <audio id="player" controls></audio>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var recording = false;
+        var chunks = [];
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    var mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    recording = true;
+                    chunks = [];
+
+                    mediaRecorder.addEventListener("dataavailable", function(event) {
+                        chunks.push(event.data);
+                    });
+
+                    mediaRecorder.addEventListener("stop", function(event) {
+                        var blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+                        socket.emit('audio', blob);
+                    });
+                });
+        }
+
+        function stopRecording() {
+            recording = false;
+        }
+
+        function playRecording() {
+            var audio = document.getElementById("player");
+            audio.src = URL.createObjectURL(new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' }));
+            audio.play();
+        }
+
+        function processAudio() {
+            socket.emit('process');
+        }
+
+        socket.on('audio', function(blob) {
+            if (!recording) {
+                var audio = document.getElementById("player");
+                audio.src = URL.createObjectURL(blob);
+                audio.play();
+            }
+        });
+    </script>
+  </div>
+
+
+</section>
+
+</body>
+</html>
